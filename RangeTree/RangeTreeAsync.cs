@@ -115,6 +115,26 @@ namespace MB.Algodat
             }
         }
 
+        /// <summary>
+        /// Retrive list of items, nearest to the left of given value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public List<T> QueryNearestLeft(TKey value)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Retrive list of items, nearest to the right of given value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public List<T> QueryNearestRight(TKey value)
+        {
+            throw new NotImplementedException();
+        }
+
 
         /// <summary>
         /// Filter out results, if items were removed since the last rebuild.

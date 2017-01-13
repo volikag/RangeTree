@@ -120,6 +120,259 @@ namespace MB.Algodat
         }
 
         /// <summary>
+        /// Retrive list of items, nearest to the left of given value.
+        /// If given value is in bounds of items, these items returns.
+        /// If there is no such item, returns empty list.
+        /// Query return rightmost items that has rightest "To" property value.
+        /// Folowing example will return items #1 an #3.
+        /// 
+        ///                    V
+        ///                    |
+        ///      F         T   |
+        ///      |===#1====|   |
+        ///        F      T    |
+        ///        |==#2==|    |
+        ///     F          T   |
+        ///     |====#3====|   |
+        /// 
+        /// See Tests for more information.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public List<T> QueryNearestLeft(TKey value)
+        {
+            var results = new List<T>();
+
+            // If the node has items, check their ranges.
+            if (_items != null)
+            {
+                foreach (var o in _items)
+                {
+                    if (o.Range.From.CompareTo(value) > 0)
+                        break;
+                    else
+                    {
+                        if (o.Range.Contains(value))
+                        {
+                            results.Add(o);
+                        }
+                    }
+                }
+            }
+
+            //We found matches, so just do query to get others
+            if (results.Count != 0)
+            {
+                if (value.CompareTo(_center) > 0 && _rightNode != null)
+                {
+                    results.AddRange(_rightNode.Query(value));
+                }
+                if (value.CompareTo(_center) < 0 && _leftNode != null)
+                {
+                    results.AddRange(_leftNode.Query(value));
+                }
+                return results;
+            }
+
+            //If we not found any intersecting items
+            //first search for candidates in subtrees
+            var candidates = new List<T>();
+
+            if (value.CompareTo(_center) > 0 && _rightNode != null)
+            {
+                candidates.AddRange(_rightNode.QueryNearestLeft(value));
+            }
+            if (value.CompareTo(_center) < 0 && _leftNode != null)
+            {
+                candidates.AddRange(_leftNode.QueryNearestLeft(value));
+            }
+
+            //If we found any candidates in subtree,
+            //we nedd to check if they are matches or just other candidates
+            if (candidates.Count != 0)
+            {
+                //And if they are matches we
+                //add them to result and returns
+                if (candidates[0].Range.Contains(value))
+                {
+                    results.AddRange(candidates);
+                    return results;
+                }
+            }
+
+            //Else they are just candidates
+            //and we need to merge them with current candidates
+            //and find leftmost of them
+
+            //Get local candidates
+            if (_items != null)
+            {
+                foreach (var o in _items)
+                {
+                    if (o.Range.From.CompareTo(value) > 0)
+                        break;
+                    else
+                    {
+                        candidates.Add(o);
+                    }
+                }
+            }
+
+            //If candidates found
+            if (candidates.Count != 0)
+            {
+                //Get the rightmost of them
+                List<T> localCandidates = new List<T>();
+
+                TKey rightmost = candidates[0].Range.To;
+                foreach (var x in candidates)
+                {
+                    if (x.Range.To.Equals(rightmost))
+                    {
+                        localCandidates.Add(x);
+                    }
+                    if (x.Range.To.CompareTo(rightmost) > 0)
+                    {
+                        localCandidates.Clear();
+                        localCandidates.Add(x);
+                        rightmost = x.Range.To;
+                    }
+                }
+
+                results.AddRange(localCandidates);
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Retrive list of items, nearest to the right of given value.
+        /// If given value is in bounds of items, these items returns.
+        /// If there is no such item, returns empty list.
+        /// Query return leftmost items that has leftest "From" property value.
+        /// Folowing example will return items #1 an #3.
+        /// 
+        ///  V
+        ///  |
+        ///  |   F         T
+        ///  |   |===#1====|
+        ///  |      F           T
+        ///  |      |=====#2====|
+        ///  |   F          T
+        ///  |   |=====#3=====|
+        ///  
+        /// See Tests for more information.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public List<T> QueryNearestRight(TKey value)
+        {
+            var results = new List<T>();
+
+            // If the node has items, check their ranges.
+            if (_items != null)
+            {
+                foreach (var o in _items)
+                {
+                    if (o.Range.From.CompareTo(value) > 0)
+                        break;
+                    else
+                    {
+                        if (o.Range.Contains(value))
+                        {
+                            results.Add(o);
+                        }
+                    }
+                }
+            }
+
+            //We found matches, so just do query to get others
+            if (results.Count != 0)
+            {
+                if (value.CompareTo(_center) > 0 && _rightNode != null)
+                {
+                    results.AddRange(_rightNode.Query(value));
+                }
+                if (value.CompareTo(_center) < 0 && _leftNode != null)
+                {
+                    results.AddRange(_leftNode.Query(value));
+                }
+                return results;
+            }
+
+            //If we not found any intersecting items
+            //first search for candidates in subtrees
+            var candidates = new List<T>();
+
+            if (value.CompareTo(_center) > 0 && _rightNode != null)
+            {
+                candidates.AddRange(_rightNode.QueryNearestRight(value));
+            }
+            if (value.CompareTo(_center) < 0 && _leftNode != null)
+            {
+                candidates.AddRange(_leftNode.QueryNearestRight(value));
+            }
+
+            //If we found any candidates in subtree,
+            //we nedd to check if they are matches or just other candidates
+            if (candidates.Count != 0)
+            {
+                //And if they are matches we
+                //add them to result and returns
+                if (candidates[0].Range.Contains(value))
+                {
+                    results.AddRange(candidates);
+                    return results;
+                }
+            }
+
+            //Else they are just candidates
+            //and we need to merge them with current candidates
+            //and find leftmost of them
+
+            //Get local candidates
+            if (_items != null)
+            {
+                foreach (var o in _items)
+                {
+                    if (o.Range.From.CompareTo(value) < 0)
+                        break;
+                    else
+                    {
+                        candidates.Add(o);
+                    }
+                }
+            }
+
+            //If candidates found
+            if (candidates.Count != 0)
+            {
+                //Get the leftmost of them
+                List<T> localCandidates = new List<T>();
+
+                TKey leftmost = candidates[0].Range.From;
+                foreach (var x in candidates)
+                {
+                    if (x.Range.From.Equals(leftmost))
+                    {
+                        localCandidates.Add(x);
+                    }
+                    if (x.Range.From.CompareTo(leftmost) < 0)
+                    {
+                        localCandidates.Clear();
+                        localCandidates.Add(x);
+                        leftmost = x.Range.From;
+                    }
+                }
+
+                results.AddRange(localCandidates);
+            }
+
+            return results;
+        }
+
+
+        /// <summary>
         /// Performans a range query.
         /// All items with overlapping ranges are returned.
         /// </summary>

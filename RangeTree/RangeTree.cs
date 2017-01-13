@@ -19,6 +19,9 @@ namespace MB.Algodat
         List<T> Query(TKey value);
         List<T> Query(Range<TKey> range);
 
+        List<T> QueryNearestLeft(TKey value);
+        List<T> QueryNearestRight(TKey value);
+
         void Rebuild();
         void Add(T item);
         void Add(IEnumerable<T> items);
@@ -86,7 +89,7 @@ namespace MB.Algodat
         public RangeTree(IComparer<T> rangeComparer)
         {
             _rangeComparer = rangeComparer;
-            _root = new RangeTreeNode<TKey, T>(rangeComparer);            
+            _root = new RangeTreeNode<TKey, T>(rangeComparer);
             _items = new List<T>();
             _isInSync = true;
             _autoRebuild = true;
@@ -99,7 +102,7 @@ namespace MB.Algodat
         public RangeTree(IEnumerable<T> items, IComparer<T> rangeComparer)
         {
             _rangeComparer = rangeComparer;
-            _root = new RangeTreeNode<TKey, T>(items, rangeComparer);            
+            _root = new RangeTreeNode<TKey, T>(items, rangeComparer);
             _items = items.ToList();
             _isInSync = true;
             _autoRebuild = true;
@@ -127,6 +130,32 @@ namespace MB.Algodat
                 Rebuild();
 
             return _root.Query(range);
+        }
+
+        /// <summary>
+        /// Retrive list of items, nearest to the left of given value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public List<T> QueryNearestLeft(TKey value)
+        {
+            if (!_isInSync && _autoRebuild)
+                Rebuild();
+
+            return _root.QueryNearestLeft(value);
+        }
+
+        /// <summary>
+        /// Retrive list of items, nearest to the right of given value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public List<T> QueryNearestRight(TKey value)
+        {
+            if (!_isInSync && _autoRebuild)
+                Rebuild();
+
+            return _root.QueryNearestRight(value);
         }
 
         /// <summary>
@@ -188,7 +217,6 @@ namespace MB.Algodat
             _items = new List<T>();
             _isInSync = true;
         }
-    }
 
-    
+    }
 }
