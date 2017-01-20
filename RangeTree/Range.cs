@@ -7,6 +7,7 @@ namespace MB.Algodat
     /// Both values must be of the same type and comparable.
     /// </summary>
     /// <typeparam name="T">Type of the values.</typeparam>
+    [Serializable]
     public struct Range<T> : IComparable<Range<T>>
         where T : IComparable<T>
     {

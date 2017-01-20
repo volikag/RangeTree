@@ -38,6 +38,7 @@ namespace MB.Algodat
     /// </summary>
     /// <typeparam name="TKey">The type of the range.</typeparam>
     /// <typeparam name="T">The type of the data items.</typeparam>
+    [Serializable]
     public class RangeTree<TKey, T> : IRangeTree<TKey, T>
         where TKey : IComparable<TKey>
         where T : IRangeProvider<TKey>

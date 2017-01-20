@@ -8,6 +8,7 @@ namespace MB.Algodat
     /// its subtree. Also contains methods to query the subtree.
     /// Basically, all interval tree logic is here.
     /// </summary>
+    [Serializable]
     public class RangeTreeNode<TKey, T>
         where TKey : IComparable<TKey>
         where T : IRangeProvider<TKey>
